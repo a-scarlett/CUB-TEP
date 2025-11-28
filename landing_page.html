@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Synapse | The Connective Tissue of Work</title>
+    <style>
+        :root {
+            /* Palette: Deep Space & Neural Light */
+            --bg-body: #030304;
+            --bg-card: #0c0c0e;
+            --bg-card-hover: #151518;
+            --text-main: #f4f4f5;
+            --text-muted: #a1a1aa;
+            --accent: #818cf8; /* Neural Indigo */
+            --accent-glow: rgba(129, 140, 248, 0.15);
+            --danger: #fb7185;
+            --border: #27272a;
+            --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --font-mono: "JetBrains Mono", "SF Mono", "Menlo", "Courier New", monospace;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            /* Dynamic background mesh */
+            background-image:
+                radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.08), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.05), transparent 25%);
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 100px 24px;
+        }
+
+        /* Typography */
+        h1 {
+            font-size: 4.5rem;
+            letter-spacing: -0.04em;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to bottom right, #fff, #9ca3af);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .title-accent {
+            color: var(--accent); /* Fallback */
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            letter-spacing: -0.02em;
+            margin-bottom: 1.5rem;
+            margin-top: 6rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        h2::before {
+            content: '';
+            display: block;
+            width: 4px;
+            height: 24px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        h3 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            font-family: var(--font-mono);
+        }
+
+        p {
+            font-size: 1.125rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            max-width: 65ch;
+            leading-trim: both;
+        }
+
+        .mono { font-family: var(--font-mono); font-size: 0.85em; color: var(--accent); opacity: 0.9; }
+        .highlight { color: #fff; font-weight: 500; }
+
+        /* Badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text-main);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-family: var(--font-mono);
+            border: 1px solid var(--border);
+            margin-bottom: 2.5rem;
+            letter-spacing: 0.05em;
+            backdrop-filter: blur(8px);
+        }
+
+        .status-badge span { color: var(--accent); margin-right: 8px; animation: pulse 2s infinite; }
+
+        @keyframes pulse {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; text-shadow: 0 0 10px var(--accent); }
+            100% { opacity: 0.5; }
+        }
+
+        /* Cards & Grid */
+        .wedge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 2rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 2.5rem;
+            border-radius: 12px;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: #3f3f46;
+            background: var(--bg-card-hover);
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
+        }
+
+        .comparison-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 1rem;
+        }
+
+        .tag {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+        .tag-competitor { color: var(--danger); }
+        .tag-us { color: var(--accent); }
+
+        /* Roadmap Visualization */
+        .roadmap-container {
+            border-left: 1px solid var(--border);
+            margin-left: 10px;
+            padding-left: 30px;
+        }
+        .roadmap-item {
+            position: relative;
+            margin-bottom: 3rem;
+        }
+        .roadmap-item::before {
+            content: '';
+            position: absolute;
+            left: -35px;
+            top: 6px;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--bg-body);
+            border: 2px solid var(--border);
+        }
+        .roadmap-item.active::before {
+            border-color: var(--accent);
+            background: var(--accent);
+            box-shadow: 0 0 10px var(--accent);
+        }
+
+        /* Tables */
+        .thesis-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 1rem;
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+        }
+        .thesis-table td {
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-muted);
+            vertical-align: top;
+        }
+        .thesis-table tr:last-child td { border-bottom: none; }
+        .thesis-table td:first-child {
+            width: 28%;
+            color: var(--text-main);
+            font-weight: 600;
+            background: rgba(255,255,255,0.01);
+        }
+
+        /* CTA */
+        .cta-box {
+            margin-top: 8rem;
+            padding: 4rem;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            text-align: center;
+            background: radial-gradient(circle at center, #18181b 0%, #030304 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-box::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: 0.5;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            background: var(--text-main);
+            color: var(--bg-body);
+            padding: 16px 36px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 1rem;
+            margin-top: 2rem;
+            transition: transform 0.2s;
+        }
+        .btn-primary:hover { transform: scale(1.02); }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 3rem; }
+            .container { padding: 40px 20px; }
+            .wedge-grid { grid-template-columns: 1fr; }
+            .thesis-table td { display: block; width: 100%; }
+            .thesis-table td:first-child { border-bottom: none; padding-bottom: 8px; color: var(--accent); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="status-badge"><span>●</span> SYNAPSE PROTOCOL v0.1</div>
+
+    <h1><span class="title-accent">Synapse.</span><br>The connective tissue<br>of your workspace.</h1>
+
+    <p>
+        Your data isn't missing. It's just disconnected.
+        <br>
+        Synapse is the <span class="highlight">passive neural layer</span> that sits between your fragmented tools (Slack, Google Workspace, GitHub, Notion) to reconstruct context, trace provenance, and synthesize clarity.
+    </p>
+
+    <section>
+        <h2>The Strategic Wedge</h2>
+        <p>Why do we win? Because we see the "Whole State," not just the "Last Prompt."</p>
+
+        <div class="wedge-grid">
+
+            <div class="card">
+                <div class="comparison-header">
+                    <span class="tag tag-competitor">The Incumbents (Notion AI)</span>
+                    <span class="tag tag-us">Synapse</span>
+                </div>
+                <h4 class="highlight" style="margin-bottom: 10px;">Cross-Silo vs. Siloed</h4>
+                <p>Notion AI is brilliant, but it is blind to GitHub. Synapse holds the state <em>between</em> tools. We detect when a committed code change invalidates a spec in a document.</p>
+            </div>
+
+            <div class="card">
+                <div class="comparison-header">
+                    <span class="tag tag-competitor">The Search (Glean)</span>
+                    <span class="tag tag-us">Synapse</span>
+                </div>
+                <h4 class="highlight" style="margin-bottom: 10px;">Reconstruction vs. Retrieval</h4>
+                <p>Enterprise search finds files (Ctrl+F). Synapse reconstructs <em>narrative</em>. We don't just show you the file; we link the debate that led to the edit.</p>
+            </div>
+
+            <div class="card">
+                <div class="comparison-header">
+                    <span class="tag tag-competitor">The Chatbots (ChatGPT)</span>
+                    <span class="tag tag-us">Synapse</span>
+                </div>
+                <h4 class="highlight" style="margin-bottom: 10px;">Live State vs. Stale Context</h4>
+                <p>Chatbots have "Memory," but it's isolated and outdated. They don't know your repo changed 5 mins ago. Synapse maintains a <strong>Live Truth</strong> across all connected tools. We don't guess; we look.</p>
+
+            </div>
+
+        </div>
+    </section>
+
+    <section>
+        <h2>Jobs to be Done</h2>
+        <p>We are solving for <strong>Entropy</strong> (disorder) and <strong>Drift</strong> (outdated information) in research teams.</p>
+
+        <table class="thesis-table">
+            <tr>
+                <td>Job 1:<br>Cognitive Offloading</td>
+                <td>
+                    <strong>Trigger:</strong> "I'm managing 5 projects and I'm terrified I'm forgetting a detail."<br>
+                    <strong>The Fix:</strong> A persistent, passive index. Synapse remembers the minutiae of every commit and edit so you can flush your biological working memory.
+                </td>
+            </tr>
+            <tr>
+                <td>Job 2:<br>Provenance Tracking</td>
+                <td>
+                    <strong>Trigger:</strong> "Why did we set the learning rate to 0.05?"<br>
+                    <strong>The Fix:</strong> Deep Traceability. Every answer Synapse generates includes a citation link to the exact source. Trust requires proof.
+                </td>
+            </tr>
+            <tr>
+                <td>Job 3:<br>Status Synthesis</td>
+                <td>
+                    <strong>Trigger:</strong> The Friday Reporting Loop.<br>
+                    <strong>The Fix:</strong> Deterministic summarization. Synapse diffs your calendar and logs to draft a "What Changed" report.
+                    <span class="mono">[Target: Reduce prep time by 90%]</span>
+                </td>
+            </tr>
+        </table>
+    </section>
+
+    <section>
+        <h2>From Observation to Advisory</h2>
+        <p>Our strategy is phased. First, we prove we can understand (Read-Only). Only then do we offer to help (Human-in-the-Loop).</p>
+
+        <div class="roadmap-container">
+            <div class="roadmap-item active">
+                <h4 class="highlight">Phase 1: The Read-Only Observer (Current Alpha)</h4>
+                <p>We ingest logs. We synthesize timelines. We answer questions. We prove that we can understand your work without breaking it.</p>
+            </div>
+
+            <div class="roadmap-item">
+                <h4 class="highlight">Phase 2: The Executive Agent (Q3 2025)</h4>
+                <p>Synapse moves from "What happened?" to "Here is a proposed fix." We <strong>never</strong> execute automatically. We provide the reasoning and the script; you click to approve.</p>
+                <div style="margin-top: 15px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 8px; border-left: 2px solid var(--accent);">
+                    <p style="margin-bottom: 5px; font-size: 0.9rem; color: #fff;"><strong>Example Interaction:</strong></p>
+                    <p style="font-size: 0.9rem; font-family: var(--font-mono); color: var(--text-muted);">
+                        > "I noticed 15 loose screenshots in Drive. I can group them into folder 'Exp-4B'."<br>
+                        > [View Commands] &nbsp;&nbsp; <span style="color:var(--accent); cursor:pointer;">[Approve]</span> &nbsp;&nbsp; [Reject]
+                    </p>
+                </div>
+                <p style="margin-top:10px; font-size: 0.85rem;"><span class="mono">Features: Configurable permissions, "Do Not Disturb" modes, On-demand triggers.</span></p>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Market Mechanics</h2>
+
+        <div class="wedge-grid">
+            <div class="card">
+                <h3>Switching Costs</h3>
+                <p><strong>The Index Moat:</strong> The value is the <span class="mono">Historical Index</span>. Canceling means lobotomizing your project history and reverting to manual search.</p>
+            </div>
+
+            <div class="card">
+                <h3>Network Effects</h3>
+                <p><strong>Data Gravity:</strong> Value scales non-linearly with integration depth. <span class="mono">Slack + Drive + GitHub > Sum of parts.</span> Each tool illuminates the blind spots of the others.</p>
+            </div>
+
+            <div class="card">
+                <h3>Integration Velocity</h3>
+                <p><strong>Time-to-Value:</strong> Unlike Enterprise Service Buses (ESB) which take months, Synapse relies on standard user-level OAuth. Onboarding takes < 3 minutes.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="cta-box">
+        <h1>Install the Synapse.</h1>
+        <p>We are accepting <strong>10 Pilots</strong> (Researchers/PMs) managing >3 active projects.</p>
+
+        <a href="#" class="btn-primary">Connect Read-Only (Alpha)</a>
+
+        <div style="margin-top: 2rem; display: flex; justify-content: center; gap: 20px; font-size: 0.8rem; color: var(--text-muted); opacity: 0.7;">
+            <span>🔒 SOC2 Compliant (Pending)</span>
+            <span>👁️ No Model Training on User Data</span>
+            <span>⚡️ Cancel Anytime</span>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 5rem; color: #333; font-size: 0.8rem;">
+        &copy; 2025 Synapse Labs. Built for the thoughtful.
+    </div>
+
+</div>
+
+</body>
+</html>
